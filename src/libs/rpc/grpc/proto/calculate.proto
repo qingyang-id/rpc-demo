@@ -1,0 +1,13 @@
+syntax = "proto3"; // 指定proto编译器版本为3  默认是2
+
+option java_package = "com.rpc.grpc";
+
+package calculate;
+
+import "base.proto";
+
+// The greeter service definition.
+service Calculate {
+  // Get a sum result
+  rpc Count (Request) returns (Response) {}
+}

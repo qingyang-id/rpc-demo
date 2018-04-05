@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+option java_package = "com.rpc.grpc";
+
+package helloWord;
+
+import "base.proto";
+
+// The greeter service definition.
+service HelloWord {
+  // Sends a greeting
+  rpc SayHello (Request) returns (Response) {}
+}

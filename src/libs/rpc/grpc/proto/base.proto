@@ -1,0 +1,20 @@
+syntax = "proto3"; // 指定proto编译器版本为3  默认是2
+
+message Any {
+  string type_url = 1;
+  bytes value = 2;
+}
+// The request message containing the user's name.
+message Request {
+  string params = 1;
+//  repeated Any params = 1;
+//  repeated Any session = 2;
+}
+
+// The response message containing the Calculate result
+message Response {
+  string response = 1;
+//  int32 code = 1;
+//  string message = 2;
+//  repeated Any data = 3;
+}

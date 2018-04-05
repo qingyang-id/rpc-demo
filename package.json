@@ -1,0 +1,29 @@
+{
+  "name": "rpc-demo",
+  "version": "1.0.0",
+  "description": "rpc-测试",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "grpc": "node src/grpc.js",
+    "thrift": "node src/thrift.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bluebird": "^3.5.1",
+    "grpc": "^1.10.1",
+    "koa": "^2.5.0",
+    "koa-route": "^3.2.0",
+    "koa-router": "^7.4.0",
+    "koa2-cors": "^2.0.5",
+    "log4js": "^2.5.3",
+    "request": "^2.85.0",
+    "thrift": "^0.11.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.10.0"
+  }
+}
