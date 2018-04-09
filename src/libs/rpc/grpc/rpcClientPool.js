@@ -48,7 +48,7 @@ class RpcClientPool {
       // grpc客户端信息
       clients: {}
     };
-    const serviceNames = ['helloWord', 'calculate'];
+    const serviceNames = ['helloWorldService', 'calculateService'];
     // services 默认值
     serviceNames.forEach((serviceName) => {
       // 存放服务模块信息

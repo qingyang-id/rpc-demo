@@ -1,7 +1,7 @@
 /**
  * @description rpc过滤器
  * @author      yq
- * @date        2017-11-09 21:34:33
+ * @date        2018-04-08 21:34:33
  */
 class BaseFilter {
   constructor() {
@@ -48,8 +48,8 @@ class BaseFilter {
       } else if (typeof handler.before === 'function') {
         return handler.before(opts, next);
       }
-      console.error('meet invalid before filter, handler or handler.before should be function.');
-      return next(new Error('invalid before filter.'));
+      console.error('invalid before filter, handler or handler.before should be function.');
+      return next(new Error('invalid before filter, handler or handler.before should be function.'));
     };
 
     next();
@@ -76,8 +76,8 @@ class BaseFilter {
       } else if (typeof handler.after === 'function') {
         return handler.after(err1, resp1, next);
       }
-      console.error('meet invalid after filter, handler or handler.after should be function.');
-      return next(new Error('invalid after filter.'));
+      console.error('invalid after filter, handler or handler.after should be function.');
+      return next(new Error('invalid after filter, handler or handler.after should be function.'));
     };
 
     next(err, resp);

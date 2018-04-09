@@ -175,11 +175,7 @@ class RpcServer extends EventEmitter {
     const processor = new thrift.MultiplexedProcessor();
     this.services.forEach((service) => {
       // 实现方法
-      console.log('service---', service);
-      console.log('serviceImpl---', service.serviceImpl);
-      console.log('service---', service.service);
       const thriftService = new service.service.Processor(service.serviceImpl);
-      console.log('serviceName---', `${service.serviceName}`);
       processor.registerProcessor(`${service.serviceName}`, thriftService);
     });
     // var framedTransport = new thrift.TFramedTransport();

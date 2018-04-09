@@ -23,7 +23,6 @@ module.exports.rpcLogic = (ctx, next) => {
       params: Object.assign({}, ctx.query, ctx.body),
       session: {}
     };
-    console.log(serviceInfo);
     return new Rpc(serviceInfo)
       .invoke(options)
       .then((result) => {

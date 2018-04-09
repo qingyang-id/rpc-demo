@@ -5,49 +5,56 @@
  */
 const IpUtil = require('../utils/ipUtil');
 
+let config;
+
+switch (process.env.NODE_ENV) {
+  case 'production':
+    config = require('./prod');
+    break;
+  case 'test':
+    config = require('./test');
+    break;
+  default:
+    config = require('./dev');
+}
+
 const host = IpUtil.getLocalIp();
 
-module.exports = {
-  appConfig: {
-    name: 'gateway',
-    host: '0.0.0.0',
-    port: 8088,
-    enableCors: true, // 是否允许跨域
-    enableGzip: true, // 是否压缩
-    compressOpt: {
-      threshold: '100kb'
-    }
-  },
+Object.assign(config, {
   thriftConfig: {
     host,
     port: 10000,
+    // 配置到数据表中
     apiConfig: {
       'get_/v1/thrift/say': {
         rpcName: 'rpc',
-        serviceName: 'helloWord',
-        actionName: 'sayHello',
+        serviceName: 'helloWorldService',
+        actionName: 'say',
       },
       'get_/v1/thrift/count': {
         rpcName: 'rpc',
-        serviceName: 'calculate',
+        serviceName: 'calculateService',
         actionName: 'count',
       }
     }
   },
+  // 配置到数据表中
   grpcConfig: {
     host,
     port: 20000,
     apiConfig: {
       'get_/v1/grpc/say': {
         rpcName: 'rpc',
-        serviceName: 'helloWord',
-        actionName: 'sayHello',
+        serviceName: 'helloWorldService',
+        actionName: 'say',
       },
       'get_/v1/grpc/count': {
         rpcName: 'rpc',
-        serviceName: 'calculate',
+        serviceName: 'calculateService',
         actionName: 'count',
       }
     }
   }
-};
+});
+
+module.exports = config;

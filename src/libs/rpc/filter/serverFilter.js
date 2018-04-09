@@ -1,7 +1,7 @@
 /**
  * @description rpc server中间件
  * @author      yq
- * @date        2017-11-10 17:27:29
+ * @date        2018-04-08 17:27:29
  */
 const BaseFilter = require('./baseFilter');
 /**
@@ -60,11 +60,10 @@ class ServerFilter extends BaseFilter {
       // 打印错误信息
       console.log('err', err.stack);
       // 这个错误应该是业务代码
-      invokeCallback(cb, JSON.stringify({
+      invokeCallback(cb, {
         code: 500,
-        msg: '系统错误，请稍后重试',
-        data: err.message,
-      }));
+        message: err.message || '系统错误，请稍后重试',
+      });
     }
   }
 }

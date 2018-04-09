@@ -10,14 +10,19 @@ const Logger = require('log4js').getLogger('middleware.rpcFilter');
  * rpc 请求前置中间件
  *
  * @param  {Object}   err    错误信息
- * @param  {Object} next   回调方法
+ * @param  {Function} next   回调方法
  */
 module.exports.beforeFilter = (opts, next) => {
-  if (!opts || !opts.params || !opts.session) {
-    return next({
-      code: -1,
-      msg: '请求参数错误'
-    });
+  if (!opts || !opts.request) {
+    return next(BaseResponse.create(-1, '请求参数错误'));
+  }
+  if (typeof opts.request === 'string') {
+    // thrift
+    opts.request = JSON.parse(opts.request);
+  } else {
+    // grpc
+    if (!opts.request.request) return next(BaseResponse.create(-1, '请求参数错误'));
+    opts.request = JSON.parse(opts.request.request);
   }
   return next();
 };
@@ -27,17 +32,27 @@ module.exports.beforeFilter = (opts, next) => {
  *
  * @param  {Object}   err    错误信息
  * @param  {Object}   result 返回data信息
- * @param  {Object} next   回调方法
+ * @param  {Function} next   回调方法
  */
 module.exports.afterFilter = (err, result, next) => {
   if (err) {
     if (err instanceof BaseResponse) {
       Logger.debug('请求失败：', err);
-      return next(JSON.stringify(err));
+      if (err.data && typeof err.data === 'object') {
+        err.setData(JSON.stringify(err.data));
+      }
+      return next(err);
     }
     const msg = (process.NODE_ENV !== 'production' && err.message) ? err.message : '请求失败，请稍后重试';
     Logger.error('请求失败：', err.stack || err);
-    return next(JSON.stringify(BaseResponse.ERR_SERVER.clone().setMessage(msg)));
+    return next(BaseResponse.ERR_SERVER.clone().setMessage(msg));
   }
-  return next(null, JSON.stringify(BaseResponse.SUCCESS.clone().setData(result)));
+  const baseResponse = BaseResponse.SUCCESS.clone();
+  if (typeof result === 'object') {
+    baseResponse.setData(JSON.stringify(result));
+  } else if (result) {
+    baseResponse.setData(result);
+  }
+  console.log('回调：', baseResponse);
+  return next(null, baseResponse);
 };

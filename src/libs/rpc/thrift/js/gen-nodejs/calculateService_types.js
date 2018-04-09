@@ -9,7 +9,7 @@ var thrift = require('thrift');
 var Thrift = thrift.Thrift;
 var Q = thrift.Q;
 
-var thriftRequest_ttypes = require('./thriftRequest_types');
+var base_ttypes = require('./base_types');
 
 
 var ttypes = module.exports = {};

@@ -6,15 +6,15 @@
 const ServerFilter = require('../../libs/rpc/filter/serverFilter');
 const { beforeFilter, afterFilter } = require('../../libs/middleware/rpcFilter');
 // 基础rpc服务
-const calculate = require('./calculate');
-const helloWord = require('./helloWord');
+const calculateService = require('./calculateService');
+const helloWorldService = require('./helloWorldService');
 
 
 // 所有rpc服务
 const services = {
   rpc: {
-    calculate,
-    helloWord
+    calculateService,
+    helloWorldService
   },
 };
 

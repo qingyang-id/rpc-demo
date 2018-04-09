@@ -3,8 +3,8 @@
  * @author yq
  * @date 2017/7/16 上午10:14
  */
-const BaseResponse = require('../../baseResponse');
-const Logger = require('log4js').getLogger(__dirname);
+const BaseResponse = require('../baseResponse');
+const Logger = require('log4js').getLogger('rpc-request');
 
 class RequestUtil {
   /**
@@ -14,11 +14,11 @@ class RequestUtil {
    */
   static formatParams(opts) {
     const options = opts || {};
-    const requestData = {
+    const request = {
       params: options.params || {},
       session: options.session || {}
     };
-    return JSON.stringify(requestData);
+    return { request: JSON.stringify(request) };
   }
 
   /**
@@ -28,21 +28,20 @@ class RequestUtil {
    * @returns {*}
    */
   static async formatResponse(err, result) {
-    console.log(err, result);
     if (err) throw err;
+    if (!result) throw BaseResponse.create(500, '请求无响应，请稍后重试');
     let data;
-    if (result && result.response) {
+    if (result.data) {
       try {
-        data = JSON.parse(result.response);
+        data = JSON.parse(result.data);
       } catch (err1) {
         Logger.error(`处理rpc返回信息(${result})失败`, err1.stack || err1);
       }
     }
-    if (!data) throw BaseResponse.create(500, '请求无响应，请稍后重试');
-    if (data.code !== 0) {
-      throw BaseResponse.create(data.code || 500, data.message || '请求失败，请稍后重试');
+    if (result.code !== 0) {
+      throw BaseResponse.create(result.code || 500, result.message || '请求失败，请稍后重试', data);
     }
-    return BaseResponse.SUCCESS.setData(data.data);
+    return BaseResponse.SUCCESS.setData(data);
   }
 }
 

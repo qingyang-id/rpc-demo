@@ -1,15 +1,15 @@
 {
   "name": "rpc-demo",
   "version": "1.0.0",
-  "description": "rpc-测试",
+  "description": "rpc-demo",
   "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
     "grpc": "node src/grpc.js",
     "thrift": "node src/thrift.js"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Sailor20",
+  "license": "MIT",
   "dependencies": {
     "bluebird": "^3.5.1",
     "grpc": "^1.10.1",

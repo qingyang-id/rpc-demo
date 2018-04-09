@@ -57,7 +57,7 @@ class ThriftClientPool {
       // thrift客户端信息
       thrifts: {}
     };
-    const serviceNames = ['helloWord', 'calculate'];
+    const serviceNames = ['helloWorldService', 'calculateService'];
     // services 默认值
     serviceNames.forEach((serviceName) => {
       // 存放服务模块信息
@@ -76,7 +76,7 @@ class ThriftClientPool {
       // 连接实例
       thrift: new ThriftClient({
         type: 'multiplex', // 多服务模式
-        rpcName: 'helloWord',
+        rpcName,
         host,
         port,
       })

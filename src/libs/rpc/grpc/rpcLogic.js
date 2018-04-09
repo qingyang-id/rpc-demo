@@ -20,7 +20,7 @@ module.exports.rpcLogic = async (ctx, next) => {
   // 匹配路径参数 todo
   if (serviceInfo) {
     const options = {
-      params: Object.assign({}, ctx.query, ctx.body),
+      params: Object.assign({}, ctx.params, ctx.query, ctx.body),
       session: {}
     };
     return new Rpc(serviceInfo)

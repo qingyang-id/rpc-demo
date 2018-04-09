@@ -4,7 +4,7 @@
  * @date 2017/7/15 下午4:37
  */
 const RpcClientPool = require('./rpcClientPool');
-const RequestUtil = require('./requestUtil');
+const RequestUtil = require('../requestUtil');
 
 class Rpc {
   /**

@@ -10,6 +10,6 @@ thrift-0.9.3.exe --gen js:node  FamilyService.thrift
 thrift-0.9.3.exe --gen js:node  RoomService.thrift
 
 #mac
-thrift -o ./src/libs/rpc/thrift/js --gen js:node ./src/libs/rpc/thrift/js/thriftRequest.thrift
-thrift -o ./src/libs/rpc/thrift/js --gen js:node ./src/libs/rpc/thrift/js/helloWord.thrift
-thrift -o ./src/libs/rpc/thrift/js --gen js:node ./src/libs/rpc/thrift/js/calculate.thrift
+thrift -o ./src/libs/rpc/thrift/js --gen js:node ./src/libs/rpc/thrift/js/base.thrift
+thrift -o ./src/libs/rpc/thrift/js --gen js:node ./src/libs/rpc/thrift/js/helloWorldService.thrift
+thrift -o ./src/libs/rpc/thrift/js --gen js:node ./src/libs/rpc/thrift/js/calculateService.thrift

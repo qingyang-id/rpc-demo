@@ -9,17 +9,17 @@ var thrift = require('thrift');
 var Thrift = thrift.Thrift;
 var Q = thrift.Q;
 
-var thriftRequest_ttypes = require('./thriftRequest_types');
+var base_ttypes = require('./base_types');
 
 
-var ttypes = require('./calculate_types');
+var ttypes = require('./calculateService_types');
 //HELPER FUNCTIONS AND STRUCTURES
 
 var CalculateService_count_args = function(args) {
   this.req = null;
   if (args) {
     if (args.req !== undefined && args.req !== null) {
-      this.req = new thriftRequest_ttypes.ThriftRequest(args.req);
+      this.req = new base_ttypes.Request(args.req);
     }
   }
 };
@@ -39,7 +39,7 @@ CalculateService_count_args.prototype.read = function(input) {
     {
       case 1:
       if (ftype == Thrift.Type.STRUCT) {
-        this.req = new thriftRequest_ttypes.ThriftRequest();
+        this.req = new base_ttypes.Request();
         this.req.read(input);
       } else {
         input.skip(ftype);
@@ -73,7 +73,7 @@ var CalculateService_count_result = function(args) {
   this.success = null;
   if (args) {
     if (args.success !== undefined && args.success !== null) {
-      this.success = args.success;
+      this.success = new base_ttypes.Response(args.success);
     }
   }
 };
@@ -92,8 +92,9 @@ CalculateService_count_result.prototype.read = function(input) {
     switch (fid)
     {
       case 0:
-      if (ftype == Thrift.Type.STRING) {
-        this.success = input.readString();
+      if (ftype == Thrift.Type.STRUCT) {
+        this.success = new base_ttypes.Response();
+        this.success.read(input);
       } else {
         input.skip(ftype);
       }
@@ -113,8 +114,8 @@ CalculateService_count_result.prototype.read = function(input) {
 CalculateService_count_result.prototype.write = function(output) {
   output.writeStructBegin('CalculateService_count_result');
   if (this.success !== null && this.success !== undefined) {
-    output.writeFieldBegin('success', Thrift.Type.STRING, 0);
-    output.writeString(this.success);
+    output.writeFieldBegin('success', Thrift.Type.STRUCT, 0);
+    this.success.write(output);
     output.writeFieldEnd();
   }
   output.writeFieldStop();

@@ -9,22 +9,22 @@ var thrift = require('thrift');
 var Thrift = thrift.Thrift;
 var Q = thrift.Q;
 
-var thriftRequest_ttypes = require('./thriftRequest_types');
+var base_ttypes = require('./base_types');
 
 
-var ttypes = require('./helloWord_types');
+var ttypes = require('./helloWorldService_types');
 //HELPER FUNCTIONS AND STRUCTURES
 
-var HelloWordService_sayHello_args = function(args) {
+var HelloWorldService_say_args = function(args) {
   this.req = null;
   if (args) {
     if (args.req !== undefined && args.req !== null) {
-      this.req = new thriftRequest_ttypes.ThriftRequest(args.req);
+      this.req = new base_ttypes.Request(args.req);
     }
   }
 };
-HelloWordService_sayHello_args.prototype = {};
-HelloWordService_sayHello_args.prototype.read = function(input) {
+HelloWorldService_say_args.prototype = {};
+HelloWorldService_say_args.prototype.read = function(input) {
   input.readStructBegin();
   while (true)
   {
@@ -39,7 +39,7 @@ HelloWordService_sayHello_args.prototype.read = function(input) {
     {
       case 1:
       if (ftype == Thrift.Type.STRUCT) {
-        this.req = new thriftRequest_ttypes.ThriftRequest();
+        this.req = new base_ttypes.Request();
         this.req.read(input);
       } else {
         input.skip(ftype);
@@ -57,8 +57,8 @@ HelloWordService_sayHello_args.prototype.read = function(input) {
   return;
 };
 
-HelloWordService_sayHello_args.prototype.write = function(output) {
-  output.writeStructBegin('HelloWordService_sayHello_args');
+HelloWorldService_say_args.prototype.write = function(output) {
+  output.writeStructBegin('HelloWorldService_say_args');
   if (this.req !== null && this.req !== undefined) {
     output.writeFieldBegin('req', Thrift.Type.STRUCT, 1);
     this.req.write(output);
@@ -69,16 +69,16 @@ HelloWordService_sayHello_args.prototype.write = function(output) {
   return;
 };
 
-var HelloWordService_sayHello_result = function(args) {
+var HelloWorldService_say_result = function(args) {
   this.success = null;
   if (args) {
     if (args.success !== undefined && args.success !== null) {
-      this.success = args.success;
+      this.success = new base_ttypes.Response(args.success);
     }
   }
 };
-HelloWordService_sayHello_result.prototype = {};
-HelloWordService_sayHello_result.prototype.read = function(input) {
+HelloWorldService_say_result.prototype = {};
+HelloWorldService_say_result.prototype.read = function(input) {
   input.readStructBegin();
   while (true)
   {
@@ -92,8 +92,9 @@ HelloWordService_sayHello_result.prototype.read = function(input) {
     switch (fid)
     {
       case 0:
-      if (ftype == Thrift.Type.STRING) {
-        this.success = input.readString();
+      if (ftype == Thrift.Type.STRUCT) {
+        this.success = new base_ttypes.Response();
+        this.success.read(input);
       } else {
         input.skip(ftype);
       }
@@ -110,11 +111,11 @@ HelloWordService_sayHello_result.prototype.read = function(input) {
   return;
 };
 
-HelloWordService_sayHello_result.prototype.write = function(output) {
-  output.writeStructBegin('HelloWordService_sayHello_result');
+HelloWorldService_say_result.prototype.write = function(output) {
+  output.writeStructBegin('HelloWorldService_say_result');
   if (this.success !== null && this.success !== undefined) {
-    output.writeFieldBegin('success', Thrift.Type.STRING, 0);
-    output.writeString(this.success);
+    output.writeFieldBegin('success', Thrift.Type.STRUCT, 0);
+    this.success.write(output);
     output.writeFieldEnd();
   }
   output.writeFieldStop();
@@ -122,16 +123,16 @@ HelloWordService_sayHello_result.prototype.write = function(output) {
   return;
 };
 
-var HelloWordServiceClient = exports.Client = function(output, pClass) {
+var HelloWorldServiceClient = exports.Client = function(output, pClass) {
     this.output = output;
     this.pClass = pClass;
     this._seqid = 0;
     this._reqs = {};
 };
-HelloWordServiceClient.prototype = {};
-HelloWordServiceClient.prototype.seqid = function() { return this._seqid; };
-HelloWordServiceClient.prototype.new_seqid = function() { return this._seqid += 1; };
-HelloWordServiceClient.prototype.sayHello = function(req, callback) {
+HelloWorldServiceClient.prototype = {};
+HelloWorldServiceClient.prototype.seqid = function() { return this._seqid; };
+HelloWorldServiceClient.prototype.new_seqid = function() { return this._seqid += 1; };
+HelloWorldServiceClient.prototype.say = function(req, callback) {
   this._seqid = this.new_seqid();
   if (callback === undefined) {
     var _defer = Q.defer();
@@ -142,27 +143,27 @@ HelloWordServiceClient.prototype.sayHello = function(req, callback) {
         _defer.resolve(result);
       }
     };
-    this.send_sayHello(req);
+    this.send_say(req);
     return _defer.promise;
   } else {
     this._reqs[this.seqid()] = callback;
-    this.send_sayHello(req);
+    this.send_say(req);
   }
 };
 
-HelloWordServiceClient.prototype.send_sayHello = function(req) {
+HelloWorldServiceClient.prototype.send_say = function(req) {
   var output = new this.pClass(this.output);
-  output.writeMessageBegin('sayHello', Thrift.MessageType.CALL, this.seqid());
+  output.writeMessageBegin('say', Thrift.MessageType.CALL, this.seqid());
   var params = {
     req: req
   };
-  var args = new HelloWordService_sayHello_args(params);
+  var args = new HelloWorldService_say_args(params);
   args.write(output);
   output.writeMessageEnd();
   return this.output.flush();
 };
 
-HelloWordServiceClient.prototype.recv_sayHello = function(input,mtype,rseqid) {
+HelloWorldServiceClient.prototype.recv_say = function(input,mtype,rseqid) {
   var callback = this._reqs[rseqid] || function() {};
   delete this._reqs[rseqid];
   if (mtype == Thrift.MessageType.EXCEPTION) {
@@ -171,20 +172,20 @@ HelloWordServiceClient.prototype.recv_sayHello = function(input,mtype,rseqid) {
     input.readMessageEnd();
     return callback(x);
   }
-  var result = new HelloWordService_sayHello_result();
+  var result = new HelloWorldService_say_result();
   result.read(input);
   input.readMessageEnd();
 
   if (null !== result.success) {
     return callback(null, result.success);
   }
-  return callback('sayHello failed: unknown result');
+  return callback('say failed: unknown result');
 };
-var HelloWordServiceProcessor = exports.Processor = function(handler) {
+var HelloWorldServiceProcessor = exports.Processor = function(handler) {
   this._handler = handler;
 }
 ;
-HelloWordServiceProcessor.prototype.process = function(input, output) {
+HelloWorldServiceProcessor.prototype.process = function(input, output) {
   var r = input.readMessageBegin();
   if (this['process_' + r.fname]) {
     return this['process_' + r.fname].call(this, r.rseqid, input, output);
@@ -199,35 +200,35 @@ HelloWordServiceProcessor.prototype.process = function(input, output) {
   }
 }
 ;
-HelloWordServiceProcessor.prototype.process_sayHello = function(seqid, input, output) {
-  var args = new HelloWordService_sayHello_args();
+HelloWorldServiceProcessor.prototype.process_say = function(seqid, input, output) {
+  var args = new HelloWorldService_say_args();
   args.read(input);
   input.readMessageEnd();
-  if (this._handler.sayHello.length === 1) {
-    Q.fcall(this._handler.sayHello.bind(this._handler), args.req)
+  if (this._handler.say.length === 1) {
+    Q.fcall(this._handler.say.bind(this._handler), args.req)
       .then(function(result) {
-        var result_obj = new HelloWordService_sayHello_result({success: result});
-        output.writeMessageBegin("sayHello", Thrift.MessageType.REPLY, seqid);
+        var result_obj = new HelloWorldService_say_result({success: result});
+        output.writeMessageBegin("say", Thrift.MessageType.REPLY, seqid);
         result_obj.write(output);
         output.writeMessageEnd();
         output.flush();
       }, function (err) {
         var result;
         result = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
-        output.writeMessageBegin("sayHello", Thrift.MessageType.EXCEPTION, seqid);
+        output.writeMessageBegin("say", Thrift.MessageType.EXCEPTION, seqid);
         result.write(output);
         output.writeMessageEnd();
         output.flush();
       });
   } else {
-    this._handler.sayHello(args.req, function (err, result) {
+    this._handler.say(args.req, function (err, result) {
       var result_obj;
       if ((err === null || typeof err === 'undefined')) {
-        result_obj = new HelloWordService_sayHello_result((err !== null || typeof err === 'undefined') ? err : {success: result});
-        output.writeMessageBegin("sayHello", Thrift.MessageType.REPLY, seqid);
+        result_obj = new HelloWorldService_say_result((err !== null || typeof err === 'undefined') ? err : {success: result});
+        output.writeMessageBegin("say", Thrift.MessageType.REPLY, seqid);
       } else {
         result_obj = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
-        output.writeMessageBegin("sayHello", Thrift.MessageType.EXCEPTION, seqid);
+        output.writeMessageBegin("say", Thrift.MessageType.EXCEPTION, seqid);
       }
       result_obj.write(output);
       output.writeMessageEnd();

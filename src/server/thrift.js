@@ -24,7 +24,7 @@ class RpcServer {
         const fileName = (serviceName.charAt(0).toUpperCase() + serviceName.slice(1));
         console.log(__dirname)
         // eslint-disable-next-line
-        const service = require(`../libs/rpc/thrift/js/gen-nodejs/${fileName}Service`);
+        const service = require(`../libs/rpc/thrift/js/gen-nodejs/${fileName}`);
         rpcServices.push({
           serviceName,
           // 服务接口定义

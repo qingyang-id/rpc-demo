@@ -6,15 +6,15 @@ message Any {
 }
 // The request message containing the user's name.
 message Request {
-  string params = 1;
+  string request = 1;
 //  repeated Any params = 1;
 //  repeated Any session = 2;
 }
 
 // The response message containing the Calculate result
 message Response {
-  string response = 1;
-//  int32 code = 1;
-//  string message = 2;
-//  repeated Any data = 3;
+  int32 code = 1;
+  string message = 2;
+  string data = 3; // json字符串
+//  Any data = 3;
 }
