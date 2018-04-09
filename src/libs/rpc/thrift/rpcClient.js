@@ -10,7 +10,7 @@ const { EventEmitter } = require('events');
 
 // 工具类
 // 日志管理工具
-const Logger = require('log4js').getLogger('thrift');
+const Logger = require('../../../utils/logger').getLogger('thrift');
 const Promise = require('bluebird');
 // const BaseResponse = require('../baseResponse');
 

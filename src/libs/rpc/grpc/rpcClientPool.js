@@ -7,7 +7,7 @@ const grpc = require('grpc');
 const path = require('path');
 const { host, port } = require('../../../config/index').grpcConfig;
 const RpcClient = require('./rpcClient');
-const Logger = require('log4js').getLogger('grpcClientPool');
+const Logger = require('../../../utils/logger').getLogger('grpcClientPool');
 
 /**
  * 获取rpc服务js文件路径

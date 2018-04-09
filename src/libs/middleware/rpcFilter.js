@@ -4,7 +4,7 @@
  * @date        2017-11-27 16:40:32
  */
 const BaseResponse = require('../baseResponse');
-const Logger = require('log4js').getLogger('middleware.rpcFilter');
+const Logger = require('../../utils/logger').getLogger('middleware.rpcFilter');
 
 /**
  * rpc 请求前置中间件

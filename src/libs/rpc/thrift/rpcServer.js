@@ -9,7 +9,7 @@ const thrift = require('thrift');
 const { EventEmitter } = require('events');
 // 工具类
 // 日志管理工具
-const Logger = require('log4js').getLogger('thriftServer');
+const Logger = require('../../../utils/logger').getLogger('thriftServer');
 const Promise = require('bluebird');
 
 // 服务状态

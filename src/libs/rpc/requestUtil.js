@@ -4,7 +4,7 @@
  * @date 2017/7/16 上午10:14
  */
 const BaseResponse = require('../baseResponse');
-const Logger = require('log4js').getLogger('rpc-request');
+const Logger = require('../../utils/logger').getLogger('rpc-request');
 
 class RequestUtil {
   /**

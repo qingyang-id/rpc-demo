@@ -5,7 +5,7 @@
  */
 const RpcClientPool = require('./rpcClientPool');
 const RequestUtil = require('../requestUtil');
-const Logger = require('log4js').getLogger('monitor');
+const Logger = require('../../../utils/logger').getLogger('monitor');
 
 class Rpc {
   /**

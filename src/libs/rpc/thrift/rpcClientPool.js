@@ -7,7 +7,7 @@ const { host, port } = require('../../../config/index').thriftConfig;
 const ThriftClient = require('./rpcClient');
 // const BaseResponse = require('../baseResponse');
 // const Promise = require('bluebird');
-const Logger = require('log4js').getLogger('thriftClientPool');
+const Logger = require('../../../utils/logger').getLogger('thriftClientPool');
 
 /**
  * 获取thrift服务js文件路径
