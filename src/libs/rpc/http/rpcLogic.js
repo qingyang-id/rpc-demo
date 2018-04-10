@@ -1,10 +1,11 @@
 /**
- * @description 接口业务逻辑中间件
- * @author      yq
- * @date        2018-04-05 14:53:46
+ * @description http业务逻辑
+ * @author yq
+ * @date 2018/4/10 下午4:29
  */
 const Rpc = require('./rpc');
-const { apiConfig } = require('../../../config/index').grpcConfig;
+const BaseResponse = require('../../baseResponse');
+const { apiConfig } = require('../../../config/index').httpConfig;
 
 
 /**
@@ -18,12 +19,11 @@ module.exports.rpcLogic = async (ctx, next) => {
   const serviceInfo = apiConfig[apiKey];
   // 匹配路径参数 todo
   if (serviceInfo) {
-    const options = {
-      params: Object.assign({}, ctx.params, ctx.query, ctx.body),
-      session: {}
-    };
-    return new Rpc(serviceInfo)
-      .invoke(options)
+    const opts = {};
+    if (ctx.query) opts.query = ctx.query;
+    if (ctx.body) opts.body = ctx.body;
+    // http请求count接口
+    return new Rpc(serviceInfo).invoke(opts)
       .then((result) => {
         // 是否需要重定向
         ctx.body = result;

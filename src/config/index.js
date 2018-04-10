@@ -19,8 +19,29 @@ switch (process.env.NODE_ENV) {
 }
 
 const host = IpUtil.getLocalIp();
-Object.assign(config.appConfig, { apiHost: `http://${host}:${config.appConfig.port}` });
+// Object.assign(config.appConfig, { apiHost: `http://${host}:${config.appConfig.port}` });
+const port = 3000;
 Object.assign(config, {
+  httpConfig: {
+    // rpc服务进行服务发现与治理
+    rpcs: [{
+      rpcName: 'rpc',
+      host: `http://${host}:${port}`,
+    }],
+    // 配置到数据表中
+    apiConfig: {
+      'get_/v1/http/say': {
+        rpcName: 'rpc',
+        method: 'GET',
+        path: '/v1/test/say',
+      },
+      'get_/v1/http/count': {
+        rpcName: 'rpc',
+        method: 'GET',
+        path: '/v1/test/count',
+      }
+    }
+  },
   thriftConfig: {
     // rpc服务进行服务发现与治理
     rpcs: [{

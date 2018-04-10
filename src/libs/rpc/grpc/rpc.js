@@ -1,5 +1,5 @@
 /**
- * @description thrift 工具类
+ * @description grpc 请求工具类
  * @author yq
  * @date 2017/7/15 下午4:37
  */

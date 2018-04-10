@@ -10,8 +10,7 @@ const { apiConfig } = require('../../../config/index').thriftConfig;
 /**
  * 本地负载均衡接口逻辑
  *
- * @param  {Object}   req  请求结构体
- * @param  {Object}   res  返回结构体
+ * @param  {Object}   ctx  请求结构体
  * @param  {Function} next 回调
  */
 module.exports.rpcLogic = (ctx, next) => {
@@ -23,8 +22,7 @@ module.exports.rpcLogic = (ctx, next) => {
       params: Object.assign({}, ctx.query, ctx.body),
       session: {}
     };
-    return new Rpc(serviceInfo)
-      .invoke(options)
+    return new Rpc(serviceInfo).invoke(options)
       .then((result) => {
         // 是否需要重定向
         ctx.body = result;

@@ -4,14 +4,12 @@
  * @date 2018/4/10 上午9:28
  */
 const Router = require('koa-router');
-const HttpCtrl = require('../../controllers/httpController');
+const { rpcLogic } = require('../../libs/rpc/http/rpcLogic');
 
 const router = new Router({
   prefix: '/http'
 });
 
-router.get('/say', HttpCtrl.say);
-
-router.get('/count', HttpCtrl.count);
+router.get('*', rpcLogic);
 
 module.exports = router.routes();
