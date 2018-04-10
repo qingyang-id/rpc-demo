@@ -31,6 +31,10 @@ class RpcClient {
       // const proto = grpc.load(path.join(__dirname, `/proto/${serviceName}.proto`));
       const protoName = (serviceName.charAt(0).toUpperCase() + serviceName.slice(1));
       this.clients[serviceName] = new serviceNameModule[serviceName][protoName](`${this.host}:${this.port}`, grpc.credentials.createInsecure());
+      // todo 用来记录客户端信息，有没有更好的方案
+      Object.assign(this.clients[serviceName], {
+        host: `${this.host}:${this.port}`,
+      });
     }
     return this.clients[serviceName];
   }

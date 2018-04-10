@@ -22,8 +22,18 @@ const host = IpUtil.getLocalIp();
 Object.assign(config.appConfig, { apiHost: `http://${host}:${config.appConfig.port}` });
 Object.assign(config, {
   thriftConfig: {
-    host,
-    port: 10000,
+    // rpc服务进行服务发现与治理
+    rpcs: [{
+      rpcName: 'rpc',
+      host,
+      port: 12000,
+      services: ['helloWorldService', 'calculateService'],
+    }, {
+      rpcName: 'rpc',
+      host,
+      port: 12001,
+      services: ['helloWorldService', 'calculateService'],
+    }],
     // 配置到数据表中
     apiConfig: {
       'get_/v1/thrift/say': {
@@ -40,8 +50,18 @@ Object.assign(config, {
   },
   // 配置到数据表中
   grpcConfig: {
-    host,
-    port: 11000,
+    // rpc服务进行服务发现与治理
+    rpcs: [{
+      rpcName: 'rpc',
+      host,
+      port: 11000,
+      services: ['helloWorldService', 'calculateService'],
+    }, {
+      rpcName: 'rpc',
+      host,
+      port: 11001,
+      services: ['helloWorldService', 'calculateService'],
+    }],
     apiConfig: {
       'get_/v1/grpc/say': {
         rpcName: 'rpc',

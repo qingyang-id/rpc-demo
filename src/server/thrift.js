@@ -4,7 +4,7 @@
  * @date 2018/4/4 下午9:12
  */
 const ThriftServer = require('../libs/rpc/thrift/rpcServer');
-const { host, port } = require('../config').thriftConfig;
+const { rpcs } = require('../config').thriftConfig;
 const services = require('../services/rpc/index');
 
 
@@ -16,47 +16,45 @@ class RpcServer {
     return RpcServer.instance;
   }
 
-  getRpcServices() {
-    const rpcServices = [];
-    Object.keys(services).forEach((rpcName) => {
-      // statements
-      Object.keys(services[rpcName]).forEach((serviceName) => {
-        const fileName = (serviceName.charAt(0).toUpperCase() + serviceName.slice(1));
-        console.log(__dirname)
-        // eslint-disable-next-line
-        const service = require(`../libs/rpc/thrift/js/gen-nodejs/${fileName}`);
-        rpcServices.push({
-          serviceName,
-          // 服务接口定义
-          service,
-          // 服务接口实现
-          serviceImpl: services[rpcName][serviceName]
-        });
-      });
-    });
-    return rpcServices;
-  }
-
   /**
    * 启动thrift服务
    */
   async start() {
-    return new Promise((resolve, reject) => new ThriftServer({
-      type: 'multiplex',
-      host,
-      port,
-      services: this.getRpcServices(),
-    })
-      .createServer((err) => {
-        if (err) {
-          // 服务启动失败
-          console.error('thrift服务启动失败:', err);
-          return reject(err);
+    rpcs.forEach(({ rpcName, host, port, services: serviceNames }) => {
+      const rpcServices = [];
+      serviceNames.forEach((serviceName) => {
+        try {
+          const fileName = (serviceName.charAt(0).toUpperCase() + serviceName.slice(1));
+          console.log(__dirname)
+          // eslint-disable-next-line
+          const service = require(`../libs/rpc/thrift/js/gen-nodejs/${fileName}`);
+          rpcServices.push({
+            serviceName,
+            // 服务接口
+            service,
+            // 服务接口实现
+            serviceImpl: services[rpcName][serviceName],
+          });
+        } catch (err) {
+          console.error('加载grpc文件失败');
         }
-        console.log(`thrift服务启动成功 ${host}:${port}`);
-        // 写入zookeeper
-        return resolve();
-      }));
+      });
+      new ThriftServer({
+        type: 'multiplex',
+        host,
+        port,
+        services: rpcServices,
+      })
+        .createServer((err) => {
+          if (err) {
+            // 服务启动失败
+            console.error('thrift服务启动失败:', err);
+          }
+          console.log(`thrift服务启动成功 ${host}:${port}`);
+          // 写入zookeeper
+        });
+    });
+    return null;
   }
 }
 

@@ -3,9 +3,9 @@
  * @author yq
  * @date 2017/7/16 下午12:04
  */
-const { host, port } = require('../../../config/index').thriftConfig;
-const ThriftClient = require('./rpcClient');
-// const BaseResponse = require('../baseResponse');
+const { rpcs } = require('../../../config/index').thriftConfig;
+const RpcClient = require('./rpcClient');
+const BaseResponse = require('../../baseResponse');
 // const Promise = require('bluebird');
 const Logger = require('../../../utils/logger').getLogger('thriftClientPool');
 
@@ -25,7 +25,7 @@ function getThriftServicePath(serverType, serviceName) {
   }
 }
 
-class ThriftClientPool {
+class RpcClientPool {
   constructor() {
     /**
      * thriftClient 客户端map集， key为为服务名，如user;
@@ -36,10 +36,10 @@ class ThriftClientPool {
 
   // 静态方法实现懒汉单例模式
   static getInstance() {
-    if (!ThriftClientPool.instance) {
-      ThriftClientPool.instance = new ThriftClientPool();
+    if (!RpcClientPool.instance) {
+      RpcClientPool.instance = new RpcClientPool();
     }
-    return ThriftClientPool.instance;
+    return RpcClientPool.instance;
   }
 
   /**
@@ -47,40 +47,43 @@ class ThriftClientPool {
    */
   init() {
     // 初始化thrift连接池信息
-    const rpcName = 'rpc';
-    this.rpcs[rpcName] = {
-      serverType: 'multiplex',
-      serviceType: 'multiplex',
-      rpcName,
-      // 节点提供的服务信息
-      services: {},
-      // thrift客户端信息
-      thrifts: {}
-    };
-    const serviceNames = ['helloWorldService', 'calculateService'];
-    // services 默认值
-    serviceNames.forEach((serviceName) => {
-      // 存放服务模块信息
-      try {
-        const serviceFilePath = getThriftServicePath(2, serviceName);
-        // 删除模块缓存
-        delete require.cache[serviceFilePath];
-        // eslint-disable-next-line
-        this.rpcs[rpcName].services[serviceName] = require(serviceFilePath);
-      } catch (err) {
-        Logger.error(`thrift服务(${serviceName})加载失败`, err.stack || err);
+    rpcs.forEach(({ rpcName, host, port, services: serviceNames }) => {
+      if (!this.rpcs[rpcName]) {
+        this.rpcs[rpcName] = {
+          serverType: 'multiplex', // 多服务模式
+          serviceType: 2, // js
+          rpcName,
+          // 节点提供的服务信息
+          services: {},
+          // thrift客户端信息
+          clients: {}
+        };
       }
+      // services 默认值
+      serviceNames.forEach((serviceName) => {
+        // 存放服务模块信息
+        try {
+          const serviceFilePath = getThriftServicePath(2, serviceName);
+          // 删除模块缓存
+          delete require.cache[serviceFilePath];
+          // eslint-disable-next-line
+          this.rpcs[rpcName].services[serviceName] = require(serviceFilePath);
+        } catch (err) {
+          Logger.error(`thrift服务(${serviceName})加载失败`, err.stack || err);
+        }
+      });
+      this.rpcs[rpcName].clients[`${host}:${port}`] = {
+        host: `${host}:${port}`,
+        clientCount: 0,
+        // 连接实例
+        client: new RpcClient({
+          type: 'multiplex', // 多服务模式
+          rpcName,
+          host,
+          port,
+        })
+      };
     });
-    this.rpcs[rpcName].thrifts[`${host}:${port}`] = {
-      host,
-      // 连接实例
-      thrift: new ThriftClient({
-        type: 'multiplex', // 多服务模式
-        rpcName,
-        host,
-        port,
-      })
-    };
   }
 
   /**
@@ -90,10 +93,38 @@ class ThriftClientPool {
    * @returns {*}
    */
   async getClient(rpcName, serviceName) {
+    let rpc = null;
+    // 查找最小连接数的节点
+    Object.keys(this.rpcs[rpcName].clients)
+      .forEach((host) => {
+        // 判断是否存活
+        if (!this.rpcs[rpcName].clients[host].client.isConnected()) {
+          return;
+        }
+        if (!rpc) {
+          rpc = this.rpcs[rpcName].clients[host];
+        } else if (this.rpcs[rpcName].clients[host].clientCount
+          < rpc.clientCount) {
+          rpc = this.rpcs[rpcName].clients[host];
+        }
+      });
+    if (!rpc) {
+      throw BaseResponse.create(-2, '当前服务不可用');
+    }
+    Logger.info(`选择服务：[${rpc.host}]`);
+    this.rpcs[rpcName].clients[rpc.host].clientCount += 1;
     const serviceNameModule = this.rpcs[rpcName].services[serviceName];
-    const thriftInfo = this.rpcs[rpcName].thrifts[`${host}:${port}`];
-    return thriftInfo.thrift.getClient(serviceName, serviceNameModule);
+    return rpc.client.getClient(serviceName, serviceNameModule);
+  }
+
+  /**
+   * 释放连接
+   * @param rpcName
+   * @param host
+   */
+  release({ rpcName, host }) {
+    this.rpcs[rpcName].clients[host].clientCount -= 1;
   }
 }
 
-module.exports = ThriftClientPool;
+module.exports = RpcClientPool;

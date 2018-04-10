@@ -30,16 +30,13 @@ class RpcClient extends EventEmitter {
   // 构造函数
   /**
    * 构造函数
-   * @param {String} thriftName thrift名称
    * @param {String} host 主机地址
    * @param {Number} port 端口
-   * @param {String} serverPath zookeeper中主机地址路径
-   * @param {String} lockPath zookeeper中锁路径
    * @param {String} type thrift类型：tcp, multiplex，http, websocket
    * @param {Boolean} ssl use ssl
    * @param {String} path 接口路径
    */
-  constructor({ thriftName, host, port, serverPath, lockPath, type = 'tcp', ssl = false, path = '/' }) {
+  constructor({ host, port, type = 'tcp', ssl = false, path = '/' }) {
     super();
     // thrift连接
     this.thriftConnect = null;
@@ -47,22 +44,18 @@ class RpcClient extends EventEmitter {
     this.clients = {};
     // thrift连接状态
     this.status = CONNECT_STATUS.unconnected;
-    // thrift名称
-    this.thriftName = thriftName;
     // thrift服务器端口号
     this.host = host;
     // thrift服务端口
     this.port = port;
-    // 锁路径
-    this.lockPath = lockPath;
-    // thrift 服务路径
-    this.serverPath = serverPath;
     // 类型 tcp, multiplex，http, websocket
     this.type = type;
     // use ssl
     this.ssl = ssl;
     // 接口路径
     this.path = path;
+    // 重连次数
+    this.reconnectCount = 0;
     this.createConnect();
   }
 
@@ -84,9 +77,15 @@ class RpcClient extends EventEmitter {
     this.once('connectCreated', () => {
       console.info(`${thriftServerName}  connect has created.`);
       Logger.info(`${thriftServerName}  connect has created.`);
+      this.reconnectCount = 0; // 重置重连次数
     });
     // 监听重建连接事件
     this.once('retryConnect', () => {
+      if (this.reconnectCount >= 15) {
+        console.info(`${thriftServerName}连接失败，且超过最大重试次数`);
+        Logger.info(`${thriftServerName}连接失败，且超过最大重试次数`);
+        return;
+      }
       console.info(`${thriftServerName} 连接断掉，尝试重新建立连接`);
       Logger.info(`${thriftServerName} 连接断掉，尝试重新建立连接`);
       // 忽略被销毁的节点
@@ -102,8 +101,9 @@ class RpcClient extends EventEmitter {
         return;
       }
       that.status = CONNECT_STATUS.connecting;
-      Promise.delay(1000)
+      Promise.delay(1000 * this.reconnectCount)
         .then(() => {
+          this.reconnectCount += 1; // 重连次数加1
           that.createConnect();
         });
     });
@@ -134,13 +134,12 @@ class RpcClient extends EventEmitter {
    * 创建connect
    */
   createConnect() {
-    const that = this;
-    if (that.status === CONNECT_STATUS.destroyed) {
+    if (this.status === CONNECT_STATUS.destroyed) {
       console.info('thrift 连接已销毁，忽略此次执行');
       Logger.info('thrift 连接已销毁，忽略此次执行');
       return;
     }
-    if (that.status === CONNECT_STATUS.connected) {
+    if (this.status === CONNECT_STATUS.connected) {
       console.info('thrift 连接已建立，忽略此次执行');
       Logger.info('thrift 连接已建立，忽略此次执行');
       return;
@@ -190,19 +189,19 @@ class RpcClient extends EventEmitter {
     this.clients = {};
     // 连接
     this.thriftConnect.on('error', (err) => {
-      that.thriftConnect = false;
-      that.status = CONNECT_STATUS.unconnected;
+      this.thriftConnect = false;
+      this.status = CONNECT_STATUS.unconnected;
       const error = err || { message: '无', stack: '无' };
       console.error(`thriftConnect error 连接错误，message:${error.message}`, error.stack || error);
       Logger.error(`thriftConnect error 连接错误，message:${error.message}`, error.stack || error);
-      that.emit('retryConnect');
+      this.emit('retryConnect');
     });
     this.thriftConnect.on('connect', (error) => {
-      that.status = CONNECT_STATUS.connected;
+      this.status = CONNECT_STATUS.connected;
       console.info('thrift 建立连接成功 error:', error || '无');
       Logger.info('thrift 建立连接成功 error:', error || '无');
-      that.connectMonitor();
-      that.emit('connectCreated');
+      this.connectMonitor();
+      this.emit('connectCreated');
     });
   }
 
@@ -243,12 +242,9 @@ class RpcClient extends EventEmitter {
           break;
         default:
       }
-      // todo 临时代码，后期一定会废弃
+      // todo 用来记录客户端信息，有没有更好的方案
       Object.assign(this.clients[serviceName], {
-        thriftName: this.thriftName,
         host: `${this.host}:${this.port}`,
-        serverPath: this.serverPath,
-        lockPath: this.lockPath,
       });
     }
     return this.clients[serviceName];
