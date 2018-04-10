@@ -8,7 +8,7 @@
  */
 const count = function (call, callback) {
   let sum = 0;
-  for (let i = 0; i < 100; i += 1) sum += 1;
+  for (let i = 0; i < 10000; i += 1) sum += (i * 100);
   callback(null, { sum });
 };
 

@@ -19,6 +19,9 @@ npm run grpc
 # 启动thrift服务端
 npm run thrift
 
+# 启动http服务端
+npm run http
+
 # 启动网关（API）服务，以3000端口启动项目，浏览器通过 [访问链接](http://localhost:3000) 访问
 npm run start
 ```
