@@ -231,8 +231,7 @@ class RpcClient extends EventEmitter {
           this.clients[serviceName] = thrift.createClient(serviceNameModule, this.thriftConnect);
           break;
         case 'multiplex':
-          this.clients[serviceName] = new thrift.Multiplexer().createClient(serviceName,
-            serviceNameModule, this.thriftConnect);
+          this.clients[serviceName] = new thrift.Multiplexer().createClient(serviceName, serviceNameModule, this.thriftConnect);
           break;
         case 'http':
           this.clients[serviceName] = thrift.createHttpClient(serviceNameModule, this.thriftConnect);

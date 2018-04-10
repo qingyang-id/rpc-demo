@@ -7,6 +7,7 @@ const { rpcs } = require('../../../config/index').thriftConfig;
 const RpcClient = require('./rpcClient');
 const BaseResponse = require('../../baseResponse');
 // const Promise = require('bluebird');
+const path = require('path');
 const Logger = require('../../../utils/logger').getLogger('thriftClientPool');
 
 /**
@@ -18,10 +19,10 @@ const Logger = require('../../../utils/logger').getLogger('thriftClientPool');
 function getThriftServicePath(serverType, serviceName) {
   switch (serverType) {
     case 2:
-      return `./js/gen-nodejs/${serviceName.substring(serviceName.lastIndexOf('.') + 1)}`;
+      return path.join(__dirname, `./js/gen-nodejs/${serviceName.substring(serviceName.lastIndexOf('.') + 1)}`);
     default:
       // JAVA服务
-      return `./java/gen-nodejs/${serviceName.substring(serviceName.lastIndexOf('.') + 1)}`;
+      return path.join(__dirname, `./java/gen-nodejs/${serviceName.substring(serviceName.lastIndexOf('.') + 1)}`);
   }
 }
 
