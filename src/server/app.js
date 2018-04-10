@@ -7,9 +7,10 @@ const Koa = require('koa');
 const koaCors = require('koa2-cors');
 const path = require('path');
 const errorHandle = require('../libs/middleware/errorHandler');
+const requestHandler = require('../libs/middleware/requestHandler');
 const RouterUtil = require('../routes/routerUtil');
 const Logger = require('../utils/logger').getLogger('app');
-const { port } = require('../config').appConfig;
+const { host, port } = require('../config').appConfig;
 
 
 class App {
@@ -24,13 +25,7 @@ class App {
     this.app.use(koaCors({ origin: '*' }));
 
     // logger
-    this.app.use(async (ctx, next) => {
-      const start = Date.now();
-      await next();
-      const ms = Date.now() - start;
-      console.log(`${ctx.method} ${ctx.url} - ${ms}`);
-      Logger.info(`${ctx.method} ${ctx.url} - ${ms}`);
-    });
+    this.app.use(requestHandler);
 
     // error handler
     this.app.use(errorHandle);
@@ -38,9 +33,15 @@ class App {
     // 路由
     await new RouterUtil(this.app, path.join(__dirname, '../routes')).initRouters();
 
-    this.app.listen(port);
-    console.info(`服务启动，访问地址：http://localhost:${port}`);
-    Logger.info(`服务启动，访问地址：http://localhost:${port}`);
+    this.app.listen(port, host, () => {
+      console.info(`服务启动，访问地址：http://${host}:${port}`);
+      Logger.info(`服务启动，访问地址：http://${host}:${port}`);
+    });
+
+    // this.app.on('error', (err, ctx) => {
+    //   console.error('server error', err, ctx);
+    //   Logger.error('server error', err, ctx);
+    // });
   }
 }
 

@@ -4,7 +4,7 @@
  * @date 2018/4/9 下午10:24
  */
 const log4js = require('log4js');
-const logConfig = require('../config');
+const { logConfig } = require('../config');
 
 log4js.configure(logConfig);
 

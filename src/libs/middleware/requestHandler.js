@@ -6,9 +6,14 @@
 const crypto = require('crypto');
 
 module.exports = async function (ctx, next) {
-  const start = Date.now();
-  ctx.reqId = crypto.randomBytes(12).toString('hex');
-  await next();
-  const ms = Date.now() - start;
-  console.log(`${ctx.method} ${ctx.url} - ${ms}`);
+  try {
+    const start = Date.now();
+    ctx.reqId = crypto.randomBytes(12).toString('hex');
+    await next();
+    const ms = Date.now() - start;
+    // console.log(ctx);
+    console.log(`${ctx.method} ${ctx.url} - ${ms}`);
+  } catch (err) {
+    console.log('errr----', err);
+  }
 };
