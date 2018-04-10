@@ -50,10 +50,10 @@ class RpcServer {
       .createServer((err) => {
         if (err) {
           // 服务启动失败
-          console.error('服务启动失败:', err);
+          console.error('thrift服务启动失败:', err);
           return reject(err);
         }
-        console.log('服务启动成功');
+        console.log(`thrift服务启动成功 ${host}:${port}`);
         // 写入zookeeper
         return resolve();
       }));

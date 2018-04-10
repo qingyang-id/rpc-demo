@@ -39,7 +39,7 @@ class RpcClient extends EventEmitter {
    * @param {Boolean} ssl use ssl
    * @param {String} path 接口路径
    */
-  constructor({ thriftName, serviceNameModule, host, port, serverPath, lockPath, type = 'tcp', ssl = false, path = '/' }) {
+  constructor({ thriftName, host, port, serverPath, lockPath, type = 'tcp', ssl = false, path = '/' }) {
     super();
     // thrift连接
     this.thriftConnect = null;
@@ -49,8 +49,6 @@ class RpcClient extends EventEmitter {
     this.status = CONNECT_STATUS.unconnected;
     // thrift名称
     this.thriftName = thriftName;
-    // thrift接口
-    this.serviceNameModule = serviceNameModule;
     // thrift服务器端口号
     this.host = host;
     // thrift服务端口
@@ -238,8 +236,7 @@ class RpcClient extends EventEmitter {
             serviceNameModule, this.thriftConnect);
           break;
         case 'http':
-          this.clients[serviceName] = thrift.createHttpClient(serviceNameModule,
-            this.thriftConnect);
+          this.clients[serviceName] = thrift.createHttpClient(serviceNameModule, this.thriftConnect);
           break;
         case 'websocket':
           this.clients[serviceName] = thrift.createWSClient(serviceNameModule, this.thriftConnect);

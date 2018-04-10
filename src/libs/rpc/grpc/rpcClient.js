@@ -26,7 +26,7 @@ class RpcClient {
     if (!this.clients[serviceName] || reload) {
       if (!serviceNameModule) {
         console.error(`客户端[${serviceName}]对应thrift文件不存在`);
-        throw new Error('没有对应的thrift服务');
+        throw new Error('没有对应的grpc服务');
       }
       // const proto = grpc.load(path.join(__dirname, `/proto/${serviceName}.proto`));
       const protoName = (serviceName.charAt(0).toUpperCase() + serviceName.slice(1));

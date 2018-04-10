@@ -41,7 +41,7 @@ Object.assign(config, {
   // 配置到数据表中
   grpcConfig: {
     host,
-    port: 20000,
+    port: 11000,
     apiConfig: {
       'get_/v1/grpc/say': {
         rpcName: 'rpc',

@@ -8,12 +8,8 @@ const App = require('./server/app');
 const { host, port } = require('./config').appConfig;
 const Logger = require('./utils/logger').getLogger('app');
 
-Logger.info('启动....');
-console.log('启动....');
 new App().start()
   .then((app) => {
-    console.log('服务启动成功');
-    console.log('启动服务......');
     const server = http.createServer(app.callback());
     server.listen(port, host, () => {
       console.info(`服务启动，访问地址：http://${host}:${port}`);
