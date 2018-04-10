@@ -20,13 +20,19 @@ switch (process.env.NODE_ENV) {
 
 const host = IpUtil.getLocalIp();
 // Object.assign(config.appConfig, { apiHost: `http://${host}:${config.appConfig.port}` });
-const port = 3000;
 Object.assign(config, {
   httpConfig: {
     // rpc服务进行服务发现与治理
     rpcs: [{
       rpcName: 'rpc',
-      host: `http://${host}:${port}`,
+      host,
+      port: 3002,
+      prefix: 'http://'
+    }, {
+      rpcName: 'rpc',
+      host,
+      port: 3003,
+      prefix: 'http://'
     }],
     // 配置到数据表中
     apiConfig: {

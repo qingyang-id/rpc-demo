@@ -4,7 +4,7 @@
       "name": "gateway",
       "script": "src/app.js",
       "exec_mode": "cluster",
-      "instances": 3,
+      "instances": 2,
       "max_memory_restart": "1G",
       //      "error_file": "logs/error.log",
       //      "out_file": "logs/out.log",
@@ -20,7 +20,7 @@
       "name": "thrift-server",
       "script": "src/thrift.js",
       "exec_mode": "cluster",
-      "instances": 3,
+      "instances": 2,
       "max_memory_restart": "1G",
       //      "error_file": "logs/error.log",
       //      "out_file": "logs/out.log",
@@ -36,7 +36,7 @@
       "name": "grpc-server",
       "script": "src/grpc.js",
       "exec_mode": "cluster",
-      "instances": 3,
+      "instances": 2,
       "max_memory_restart": "1G",
       //      "error_file": "logs/error.log",
       //      "out_file": "logs/out.log",
@@ -46,6 +46,22 @@
       "log_date_format": "YYYY-MM-DD HH:mm Z",
       "env": {
         "NODE_ENV": "production"
+      }
+    },
+    {
+      "name": "http-server",
+      "script": "src/http.js",
+      "exec_mode": "cluster",
+      "instances": 2,
+      "max_memory_restart": "1G",
+      "error_file": "logs/error.log",
+      "out_file": "logs/out.log",
+      //      "out_file": "/dev/null",
+      //      "error_file": "/dev/null",
+      "merge_logs": true,
+      "log_date_format": "YYYY-MM-DD HH:mm Z",
+      "env": {
+        "NODE_ENV": "test"
       }
     }
   ]

@@ -29,7 +29,7 @@ class RpcClientPool {
    */
   init() {
     // 初始化grpc连接池信息
-    rpcs.forEach(({ rpcName, host }) => {
+    rpcs.forEach(({ rpcName, host, port, prefix }) => {
       if (!this.rpcs[rpcName]) {
         this.rpcs[rpcName] = {
           name: rpcName,
@@ -37,9 +37,9 @@ class RpcClientPool {
           clients: {}
         };
       }
-      // services 默认值
-      this.rpcs[rpcName].clients[host] = {
-        host,
+      const serverNode = `${prefix}${host}:${port}`;
+      this.rpcs[rpcName].clients[serverNode] = {
+        host: serverNode,
         clientCount: 0,
       };
     });
