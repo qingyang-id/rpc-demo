@@ -5,7 +5,7 @@
  */
 const grpc = require('grpc');
 const path = require('path');
-const services = require('./rpc/index');
+const services = require('../services/rpc/index');
 const { host, port } = require('../config').grpcConfig;
 
 class GrpcServer {

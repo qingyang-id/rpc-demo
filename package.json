@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node src/app.js",
     "grpc": "node src/grpc.js",
-    "thrift": "node src/thrift.js"
+    "thrift": "node src/thrift.js",
+    "test": "pm2 start pm2/test.json",
+    "prod": "pm2 start pm2/prod.json"
   },
   "author": "Sailor20",
   "license": "MIT",

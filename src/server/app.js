@@ -10,8 +10,6 @@ const errorHandle = require('../libs/middleware/errorHandler');
 const requestHandler = require('../libs/middleware/requestHandler');
 const RouterUtil = require('../routes/routerUtil');
 const Logger = require('../utils/logger').getLogger('app');
-const { host, port } = require('../config').appConfig;
-
 
 class App {
   constructor() {
@@ -33,15 +31,13 @@ class App {
     // 路由
     await new RouterUtil(this.app, path.join(__dirname, '../routes')).initRouters();
 
-    this.app.listen(port, host, () => {
-      console.info(`服务启动，访问地址：http://${host}:${port}`);
-      Logger.info(`服务启动，访问地址：http://${host}:${port}`);
+    // error-handling
+    this.app.on('error', (err, ctx) => {
+      console.error('app error', err, ctx);
+      Logger.error('app error', err, ctx);
     });
 
-    // this.app.on('error', (err, ctx) => {
-    //   console.error('server error', err, ctx);
-    //   Logger.error('server error', err, ctx);
-    // });
+    return this.app;
   }
 }
 

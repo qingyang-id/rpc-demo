@@ -19,7 +19,7 @@ switch (process.env.NODE_ENV) {
 }
 
 const host = IpUtil.getLocalIp();
-Object.assign(config.appConfig, { apiHost: `http://localhost:${config.appConfig.port}` });
+Object.assign(config.appConfig, { apiHost: `http://${host}:${config.appConfig.port}` });
 Object.assign(config, {
   thriftConfig: {
     host,

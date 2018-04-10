@@ -3,7 +3,7 @@
  * @author yq
  * @date 2018/4/10 上午9:30
  */
-const HelloWorldService = require('../server/rpc/helloWorldService');
+const HelloWorldService = require('../services/rpc/helloWorldService');
 const BaseResponse = require('../libs/baseResponse');
 
 class HelloWorldController {

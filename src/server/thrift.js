@@ -5,7 +5,7 @@
  */
 const ThriftServer = require('../libs/rpc/thrift/rpcServer');
 const { host, port } = require('../config').thriftConfig;
-const services = require('./rpc/index');
+const services = require('../services/rpc/index');
 
 
 class RpcServer {
