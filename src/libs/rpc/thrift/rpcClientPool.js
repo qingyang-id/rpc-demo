@@ -17,12 +17,14 @@ const Logger = require('../../../utils/logger').getLogger('thriftClientPool');
  * @return {String}             thrift服务js路径
  */
 function getThriftServicePath(serverType, serviceName) {
+  // 首字母变大写
+  serviceName = (serviceName.charAt(0).toUpperCase() + serviceName.slice(1));
   switch (serverType) {
     case 2:
-      return path.join(__dirname, `./js/gen-nodejs/${serviceName.substring(serviceName.lastIndexOf('.') + 1)}`);
+      return path.join(__dirname, `./js/gen-nodejs/${serviceName.substring(serviceName.lastIndexOf('.') + 1)}.js`);
     default:
       // JAVA服务
-      return path.join(__dirname, `./java/gen-nodejs/${serviceName.substring(serviceName.lastIndexOf('.') + 1)}`);
+      return path.join(__dirname, `./java/gen-nodejs/${serviceName.substring(serviceName.lastIndexOf('.') + 1)}.js`);
   }
 }
 
@@ -67,7 +69,6 @@ class RpcClientPool {
           const serviceFilePath = getThriftServicePath(2, serviceName);
           // 删除模块缓存
           delete require.cache[serviceFilePath];
-          console.log(serviceName, serviceFilePath);
           // eslint-disable-next-line
           this.rpcs[rpcName].services[serviceName] = require(serviceFilePath);
         } catch (err) {
@@ -115,7 +116,6 @@ class RpcClientPool {
     }
     Logger.info(`选择服务：[${rpc.host}]`);
     this.rpcs[rpcName].clients[rpc.host].clientCount += 1;
-    console.log(serviceName, this.rpcs[rpcName].services);
     const serviceNameModule = this.rpcs[rpcName].services[serviceName];
     return rpc.client.getClient(serviceName, serviceNameModule);
   }
